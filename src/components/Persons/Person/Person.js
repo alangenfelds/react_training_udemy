@@ -1,50 +1,62 @@
-import React, {Component} from "react";
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import classes from "./Person.css";
-// import WithClass from '../../../hoc/WithClass';
-import Aux from '../../../hoc/_Aux';
+import classes from './Person.css';
 import withClass from '../../../hoc/WithClassV2';
+import Aux from '../../../hoc/_Aux';
+import {AuthContext} from '../../../containers/App';
 
 class Person extends Component {
+    constructor( props ) {
+        super( props );
+        console.log( '[Person.js] Inside Constructor', props );
+        this.inputElement = React.createRef();
+    }
 
-  constructor(props) {
-    super(props);
-    console.log('[Person.js] inside constructor', props);
-  }
-  
-  componentWillMount() {
-    console.log('[Person.js] inside componentWillMount');
-  }
-  
-  componentDidMount() {
-    console.log('[Person.js] inside componentDidMount');
-  }
+    componentWillMount () {
+        console.log( '[Person.js] Inside componentWillMount()' );
+    }
 
+    componentDidMount () {
+        console.log( '[Person.js] Inside componentDidMount()' );
+        if ( this.props.position === 0 ) {
+            this.inputElement.current.focus();
+        }
+    }
 
-  render() {
-    console.log('[Person.js] inside render');
-    return (
-      <Aux>
-       {/* <WithClass classes= {classes.Person}> */}
-       {/* <div className={classes.Person}> */}
-        <p onClick={this.props.click}>
-          I'm {this.props.name} and I am {this.props.age} years old
-        </p>
-        <p>{this.props.children}</p>
-        <input type="text" onChange={this.props.changed} defaultValue={this.props.name} />
-       {/* </div> */}
-      {/* </WithClass> */}
-      </Aux>
-    );
-  }
+    focus() {
+        this.inputElement.current.focus();
+    }
+
+    render () {
+        console.log( '[Person.js] Inside render()' );
+        return (
+            <Aux>
+              <AuthContext.Consumer>
+                {auth => auth ? <p>I'm logged in</p> : null}
+              </AuthContext.Consumer>
+                <p onClick={this.props.click}>I'm {this.props.name} and I am {this.props.age} years old!</p>
+                <p>{this.props.children}</p>
+                <input
+                    ref={this.inputElement}
+                    type="text"
+                    onChange={this.props.changed}
+                    value={this.props.name} />
+            </Aux>
+        )
+        // return [
+        //     <p key="1" onClick={this.props.click}>I'm {this.props.name} and I am {this.props.age} years old!</p>,
+        //     <p key="2">{this.props.children}</p>,
+        //     <input key="3" type="text" onChange={this.props.changed} value={this.props.name} />
+        // ]
+    }
 }
 
 Person.propTypes = {
-  click: PropTypes.func,
-  name: PropTypes.string,
-  age: PropTypes.number,
-  changed: PropTypes.func
+    click: PropTypes.func,
+    name: PropTypes.string,
+    age: PropTypes.number,
+    changed: PropTypes.func
 };
 
-export default withClass(Person, classes.Person);
+export default withClass( Person, classes.Person );

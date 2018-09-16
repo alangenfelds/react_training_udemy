@@ -8,6 +8,8 @@ import Aux from "../hoc/_Aux";
 // import WithClass from '../hoc/WithClass';
 import withClass from "../hoc/WithClassV2";
 
+export const AuthContext = React.createContext(false);
+
 class App extends PureComponent {
   constructor(props) {
     super(props);
@@ -20,7 +22,8 @@ class App extends PureComponent {
       ],
       otherState: "some other value",
       showPersons: false,
-      toggleClickedCounter: 0
+      toggleClickedCounter: 0,
+      authenticated: false
     };
   }
 
@@ -45,6 +48,23 @@ class App extends PureComponent {
       nextState
     );
   }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    console.log(
+      "[UPDATE App.js] Inside getDerivedStateFromProps",
+      nextProps,
+      prevState
+    );
+
+    return prevState;
+  }
+
+
+getSnapshotBeforeUpdate() {
+  console.log(
+    "[UPDATE App.js] Inside getSnapshotBeforeUpdate");
+}
+
 
   componentDidUpdate() {
     console.log("[UPDATE App.js] Inside componentDidUpdate");
@@ -107,6 +127,12 @@ class App extends PureComponent {
     });
   };
 
+  loginHandler = () => {
+    this.setState({
+      authenticated: true
+    })
+  }
+
   render() {
     console.log("[App.js] inside render");
     let persons = null;
@@ -137,8 +163,12 @@ class App extends PureComponent {
           showPersons={this.state.showPersons}
           persons={this.state.persons}
           toggle={this.togglePersonsHandler}
+          login={this.loginHandler}
         />
-        {persons}
+        <AuthContext.Provider value = {this.state.authenticated}>
+          {persons}
+        </AuthContext.Provider>
+        
         {/* </div> */}
         {/* </WithClass> */}
       </Aux>
